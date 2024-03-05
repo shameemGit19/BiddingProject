@@ -54,6 +54,9 @@ const userObject = {
 },
 homepage : async(req,res)=>{
 
+},
+Bidding : async (req,res)=>{
+    
 }
 }
 
