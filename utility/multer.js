@@ -7,8 +7,8 @@ const region = process.env.REGION;
 const s3Client = new S3Client({
   region,
   credentials: {
-    accessKeyId: process.env.AWS_S3_ACCESS_KEY,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    accessKeyId: process.env.S3_ACCESS_KEY,
+    secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
   },
 });
 const upload = multer({
@@ -21,7 +21,7 @@ const upload = multer({
       cb(null, { fieldName: file.fieldname });
     },
     key: function(req, file, cb) {
-      cb(null, `image-${Date.now()}.img`);
+      cb(null, `image-${Date.now()}.png`);
     },
   }),
 });

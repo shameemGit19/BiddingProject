@@ -10,4 +10,5 @@ router.post('/sendotp',sendotp)
 router.post('/home',homepage)
 router.post('/Bidding',Bidding)
 router.post('/addproduct',upload.single('image'),addProduct)
+
 module.exports = router
