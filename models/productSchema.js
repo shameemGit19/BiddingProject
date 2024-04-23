@@ -11,7 +11,7 @@ const productSchema = new mongoose.Schema({
         type : Number,
         
     },year : {
-        type : Date,
+        type : Number,
         
     },model : {
         type : String,

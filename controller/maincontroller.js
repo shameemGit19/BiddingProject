@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const generateotp = require('../utility/twilio')
 const Products = require("../models/productSchema")
 const jwt = require('jsonwebtoken');
-
+const ProductSchema = require('../models/productSchema')
 const userObject = {
     postusersignup: async (req, res) => {
         const { username, phone, password } = req.body
@@ -23,23 +23,26 @@ const userObject = {
         }
     },
     postuserlogin: async (req, res) => {
-        const { username, password } = req.body
-        console.log(username, password)
-
-        const existingUser = await User.findOne({ username: username })
-        console.log(existingUser, 'hi');
-        if (!existingUser) {
-            return res.status(400).json({ message: 'user not found' })
+        const { username, password } = req.body;
+        try {
+            const existingUser = await User.findOne({ username });
+            if (!existingUser) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+            const comparePassword = await bcrypt.compare(password, existingUser.password);
+            if (!comparePassword) {
+                return res.status(401).json({ error: 'Incorrect password' });
+            }
+            const token = jwt.sign({ id: existingUser._id }, process.env.SECRET_KEY, { expiresIn: '1h' });
+            console.log(token)
+            res.status(200).json({ message: 'Login successful', token });
+          
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal server error' });
         }
-        const comparePassword = await bcrypt.compare(password, existingUser.password);
-        console.log(comparePassword);
-        if (!comparePassword) {
-            return res.status(400).json({ error: 'Incorrect password' })
-        }
-        const token = await jwt.sign({ id: existingUser._id }, process.env.SECRET_KEY, { expiresIn: '1h' });
-        console.log(token, 'token is created');
-        return res.status(200).json({ message: 'user found', token });
     },
+    
     // postuserforgot :async(req,res)=>{
     //     const {username,password}= req.body
     // },
@@ -84,13 +87,25 @@ const userObject = {
                 model: model,
                 image: image,
             });
-            console.log(newProduct);
+            console.log(newProduct,'pp');
             await newProduct.save();
             res.status(200).json({ inzaf: "product added successfully" });
         } catch (error) {
+            console.error(error)
             res.status(500).json({ error: 'back intrnal server error' });
         }
     },
+    showProduct:async (req, res)=>{
+        console.log('hi');
+        try {
+            const getProduct = await ProductSchema.find()
+           res.status(200).json({message:'fetching success',getProduct})
+        } catch (error) {
+            console.error(error)
+            res.status(500).json({ error: ' intrnal server error' });
+
+        }
+    }
 }
 
 module.exports = userObject
