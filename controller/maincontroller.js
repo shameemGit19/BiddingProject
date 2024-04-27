@@ -65,9 +65,23 @@ const userObject = {
     homepage: async (req, res) => {
 
     },
-    Bidding: async (req, res) => {
-
+    bidCar: async (req, res) => {
+        console.log('dico');
+        const carId = req.params.carId; // Extract ID string from req.params
+        console.log(carId);
+        try {
+            const bidCar = await ProductSchema.findById(carId);
+            console.log(bidCar);
+            if (!bidCar) {
+                return res.status(404).json({ message: 'Car not found' });
+            }
+            res.status(200).json({ message: 'Fetching success', bidCar });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
     },
+    
     addProduct: async (req, res) => {
         try {
             const { name, description, price, year, model } = req.body;
@@ -89,10 +103,10 @@ const userObject = {
             });
             console.log(newProduct,'pp');
             await newProduct.save();
-            res.status(200).json({ inzaf: "product added successfully" });
+            res.status(200).json({ success: "product added successfully" });
         } catch (error) {
             console.error(error)
-            res.status(500).json({ error: 'back intrnal server error' });
+            res.status(500).json({ error: 'back internal server error' });
         }
     },
     showProduct:async (req, res)=>{
@@ -102,10 +116,11 @@ const userObject = {
            res.status(200).json({message:'fetching success',getProduct})
         } catch (error) {
             console.error(error)
-            res.status(500).json({ error: ' intrnal server error' });
+            res.status(500).json({ error: ' internal server error' });
 
         }
-    }
+    },
+   
 }
 
 module.exports = userObject
