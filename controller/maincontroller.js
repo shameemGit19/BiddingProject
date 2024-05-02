@@ -4,6 +4,7 @@ const generateotp = require('../utility/twilio')
 const Products = require("../models/productSchema")
 const jwt = require('jsonwebtoken');
 const ProductSchema = require('../models/productSchema')
+const UserSchema = require('../models/userSchema')
 const userObject = {
     postusersignup: async (req, res) => {
         const { username, phone, password } = req.body
@@ -62,8 +63,18 @@ const userObject = {
 
         }
     },
-    homepage: async (req, res) => {
-
+    userProfile: async (req, res) => {
+        console.log('user profile')
+        const {userId} = req.params;
+        console.log(userId);
+        try {
+            const userProfile = await UserSchema.findById(userId);
+            console.log(userId);
+            res.status(200).json({message : 'fetching success', userProfile})
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({messsage : ' internal server error'})
+        }
     },
     bidCar: async (req, res) => {
         console.log('dico');
@@ -120,6 +131,16 @@ const userObject = {
 
         }
     },
+    showUser : async (req, res)=>{
+        console.log('show user')
+        try {
+            const getUser = await UserSchema.find()
+            res.status(200).json({message:'fetching success showuser',getUser})
+        } catch (error) {
+            console.error(error)
+            res.status(500).json({error:'internal server error showuser'})
+        }
+    }
    
 }
 
